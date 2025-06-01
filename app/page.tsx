@@ -20,6 +20,7 @@ export default function Home() {
           <Demo />
           {/* <Testimonials /> */}
           <GlobalReach />
+          <Footer />
         </main>
       </div>
     // </AuthLayout>

@@ -4,7 +4,7 @@ import { motion, useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Globe, MapPin, Users, Database, Clock, Shield } from "lucide-react";
+import { Globe, Users, Database, Clock, Shield } from "lucide-react";
 
 export function GlobalReach() {
   const ref = useRef(null);
@@ -295,7 +295,7 @@ export function GlobalReach() {
             variants={containerVariants}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
           >
-            {worldStats.map((stat, index) => (
+            {worldStats.map((stat) => (
               <motion.div
                 key={stat.country}
                 variants={itemVariants}

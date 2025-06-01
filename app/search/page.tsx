@@ -2,9 +2,8 @@
 
 import { motion, useAnimation, AnimatePresence } from "framer-motion";
 import React from "react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -16,7 +15,6 @@ import {
   X,
   User,
   Briefcase,
-  Globe,
   MessageSquare,
   Settings,
   Crown,
@@ -25,13 +23,10 @@ import {
   Star,
   Trash2,
   ArrowLeft,
-  Sparkles,
   Users,
   Building,
   MapPin,
-  Zap,
 } from "lucide-react";
-import Link from "next/link";
 
 interface SearchHistory {
   id: string;
