@@ -131,12 +131,14 @@ export default function SearchPage() {
       {/* Animated Sidebar */}
       <AnimatePresence>
         {sidebarOpen && (
-          <motion.aside
+          <motion.div
             initial={{ x: -300, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -300, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="w-80 bg-white/95 backdrop-blur-md border-r border-gray-200/60 shadow-xl flex flex-col"
+            role="complementary"
+            aria-label="Sidebar navigation"
           >
             {/* Sidebar Header */}
             <motion.div
@@ -269,7 +271,7 @@ export default function SearchPage() {
                 <Crown className="w-4 h-4 text-yellow-500 group-hover:scale-110 transition-transform" />
               </motion.div>
             </motion.div>
-          </motion.aside>
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -557,42 +559,6 @@ export default function SearchPage() {
             </motion.div>
           </motion.main>
         </div>
-
-        {/* Upgrade Banner */}
-        {/* <motion.footer
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="p-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <motion.div
-                className="w-10 h-10 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center mr-4"
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <Zap className="w-5 h-5" />
-              </motion.div>
-              <div>
-                <p className="font-semibold">Upgrade to Premium</p>
-                <p className="text-sm opacity-90">Get unlimited searches and advanced features</p>
-              </div>
-            </div>
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button
-                variant="secondary"
-                className="bg-white/20 backdrop-blur-md border-white/30 text-white hover:bg-white/30 shadow-xl"
-              >
-                <Crown className="w-4 h-4 mr-2" />
-                Upgrade Now
-              </Button>
-            </motion.div>
-          </div>
-        </motion.footer> */}
       </div>
     </div>
   );
