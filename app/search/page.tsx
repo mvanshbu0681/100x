@@ -131,7 +131,7 @@ export default function SearchPage() {
       {/* Animated Sidebar */}
       <AnimatePresence>
         {sidebarOpen && (
-          <motion.div
+          <motion.aside
             initial={{ x: -300, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -300, opacity: 0 }}
@@ -271,7 +271,7 @@ export default function SearchPage() {
                 <Crown className="w-4 h-4 text-yellow-500 group-hover:scale-110 transition-transform" />
               </motion.div>
             </motion.div>
-          </motion.div>
+          </motion.aside>
         )}
       </AnimatePresence>
 
