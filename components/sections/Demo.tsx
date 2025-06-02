@@ -266,9 +266,11 @@ export function Demo() {
                             whileHover={{ scale: 1.1 }}
                           >
                             <div className="w-16 h-16 rounded-xl overflow-hidden">
-                              <Image
+                              <img
                                 src={person.avatar}
                                 alt={person.name}
+                                width={64}
+                                height={64}
                                 className="w-full h-full object-cover"
                               />
                             </div>

@@ -26,6 +26,10 @@ import {
   Users,
   Building,
   MapPin,
+  Loader2,
+  AlertCircle,
+  Mail,
+  Phone,
 } from "lucide-react";
 
 interface SearchHistory {
@@ -34,6 +38,35 @@ interface SearchHistory {
   type: string;
   timestamp: Date;
   isFavorite: boolean;
+  results?: any; // Store API results
+}
+
+interface QueryRequest {
+  query: string;
+}
+
+interface SearchResults {
+  query: string;
+  results: Array<{
+    id: number;
+    name: string;
+    title: string;
+    company: string;
+    location: string;
+    email: string;
+    phone?: string;
+    linkedin?: string;
+    verified: boolean;
+    accuracy: number;
+    sources: string[];
+    rawText?: string; // Add raw text field
+  }>;
+  metadata: {
+    searchTime: string;
+    totalResults: number;
+    accuracy: number;
+    timestamp: string;
+  };
 }
 
 const searchTabs = [
@@ -92,26 +125,66 @@ export default function SearchPage() {
     },
   ]);
   const [selectedHistory, setSelectedHistory] = useState<string | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [searchResults, setSearchResults] = useState<any>(null);
   const controls = useAnimation();
 
   useEffect(() => {
     controls.start("visible");
   }, [controls]);
 
-  const handleSearch = () => {
+  const searchAPI = async (query: string): Promise<SearchResults> => {
+    const response = await fetch("/api/search", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query } as QueryRequest),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Search failed: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  };
+
+  const handleSearch = async () => {
     if (!searchQuery.trim()) return;
 
-    const newSearch: SearchHistory = {
-      id: Date.now().toString(),
-      query: searchQuery,
-      type: activeTab,
-      timestamp: new Date(),
-      isFavorite: false,
-    };
+    setIsSearching(true);
+    setSearchError(null);
 
-    setSearchHistory((prev) => [newSearch, ...prev]);
-    setSearchQuery("");
-    setSelectedHistory(newSearch.id);
+    try {
+      // Call the backend API
+      const results = await searchAPI(searchQuery);
+
+      const newSearch: SearchHistory = {
+        id: Date.now().toString(),
+        query: searchQuery,
+        type: activeTab,
+        timestamp: new Date(),
+        isFavorite: false,
+        results: results,
+      };
+
+      setSearchHistory((prev) => [newSearch, ...prev]);
+      setSearchResults(results);
+      setSelectedHistory(newSearch.id);
+      setSearchQuery("");
+    } catch (error) {
+      console.error("Search error:", error);
+      setSearchError(
+        error instanceof Error
+          ? error.message
+          : "Search failed. Please try again."
+      );
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   const toggleFavorite = (id: string) => {
@@ -391,36 +464,61 @@ export default function SearchPage() {
                           ?.label.toLowerCase() || "search query"
                       }...`}
                       className="w-full text-lg text-gray-800 placeholder:text-gray-400 bg-transparent border-0 outline-none focus:ring-0 py-3"
-                      onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                      onKeyDown={(e) => e.key === "Enter" && !isSearching && handleSearch()}
+                      disabled={isSearching}
                     />
                   </div>
                   <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
+                    whileHover={{ scale: isSearching ? 1 : 1.1 }}
+                    whileTap={{ scale: isSearching ? 1 : 0.9 }}
                     className="ml-3"
                   >
                     <Button
                       onClick={handleSearch}
-                      disabled={!searchQuery.trim()}
+                      disabled={!searchQuery.trim() || isSearching}
                       className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center"
                     >
-                      <Send className="w-5 h-5" />
-                      <span className="ml-2 font-medium">Search</span>
+                      {isSearching ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          <span className="ml-2 font-medium">Searching...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-5 h-5" />
+                          <span className="ml-2 font-medium">Search</span>
+                        </>
+                      )}
                     </Button>
                   </motion.div>
                 </div>
               </div>
 
+              {/* Search Error */}
+              {searchError && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center"
+                >
+                  <AlertCircle className="w-5 h-5 text-red-500 mr-3" />
+                  <div>
+                    <p className="text-red-800 font-medium">Search Error</p>
+                    <p className="text-red-600 text-sm">{searchError}</p>
+                  </div>
+                </motion.div>
+              )}
+
               {/* Search Suggestions */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{
-                  opacity: searchQuery ? 1 : 0,
-                  y: searchQuery ? 0 : 10,
+                  opacity: searchQuery && !isSearching ? 1 : 0,
+                  y: searchQuery && !isSearching ? 0 : 10,
                 }}
                 className="mt-4 bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden"
               >
-                {searchQuery && (
+                {searchQuery && !isSearching && (
                   <div className="p-4">
                     <div className="text-sm text-gray-600 mb-2">
                       Quick suggestions:
@@ -446,6 +544,109 @@ export default function SearchPage() {
                 )}
               </motion.div>
             </motion.div>
+
+            {/* Search Results Display */}
+            {searchResults && (
+              <motion.div
+                variants={itemVariants}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-8"
+              >
+                <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xl font-bold text-gray-800">
+                      Search Results
+                    </h3>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant="secondary" className="bg-green-100 text-green-800">
+                        {searchResults.metadata?.totalResults || searchResults.results?.length || 0} Results
+                      </Badge>
+                      <Badge variant="outline" className="text-gray-600">
+                        {searchResults.metadata?.searchTime || "N/A"}
+                      </Badge>
+                    </div>
+                  </div>
+                  
+                  {/* Results Grid */}
+                  {searchResults.results && searchResults.results.length > 0 ? (
+                    <div className="space-y-4">
+                      {searchResults.results.map((person, index) => (
+                        <motion.div
+                          key={person.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="p-4 bg-gray-50 rounded-xl border border-gray-200 hover:border-blue-300 transition-colors"
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-2 mb-2">
+                                <h4 className="text-lg font-semibold text-gray-900">{person.name}</h4>
+                                {person.verified && (
+                                  <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                                    Verified
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-gray-600 mb-2">{person.title} at {person.company}</p>
+                              <p className="text-gray-500 text-sm mb-3">{person.location}</p>
+                              
+                              {/* Display raw text if available */}
+                              {person.rawText && (
+                                <div className="mb-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                  <p className="text-sm text-gray-700 italic">"{person.rawText}"</p>
+                                </div>
+                              )}
+                              
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                                <div className="flex items-center text-gray-600">
+                                  <Mail className="w-4 h-4 mr-2" />
+                                  {person.email}
+                                </div>
+                                {person.phone && (
+                                  <div className="flex items-center text-gray-600">
+                                    <Phone className="w-4 h-4 mr-2" />
+                                    {person.phone}
+                                  </div>
+                                )}
+                                {person.linkedin && (
+                                  <div className="flex items-center text-blue-600">
+                                    <Users className="w-4 h-4 mr-2" />
+                                    <a 
+                                      href={person.linkedin} 
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      className="hover:underline"
+                                    >
+                                      LinkedIn Profile
+                                    </a>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            
+                            <div className="text-right">
+                              <div className="flex items-center space-x-1 mb-2">
+                                <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                                <span className="text-sm font-medium">{person.accuracy}%</span>
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                Sources: {person.sources?.join(", ")}
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      No results found for this search.
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
 
             {/* Search History */}
             <motion.div variants={itemVariants} className="flex-1">
@@ -476,7 +677,12 @@ export default function SearchPage() {
                           : "bg-white/80 backdrop-blur-md border-gray-200/60 hover:border-blue-300/60 hover:shadow-lg"
                       }`}
                       whileHover={{ scale: 1.02, y: -2 }}
-                      onClick={() => setSelectedHistory(item.id)}
+                      onClick={() => {
+                        setSelectedHistory(item.id);
+                        if (item.results) {
+                          setSearchResults(item.results);
+                        }
+                      }}
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -509,6 +715,14 @@ export default function SearchPage() {
                                   ?.label
                               }
                             </Badge>
+                            {item.results && (
+                              <Badge
+                                variant="secondary"
+                                className="text-xs ml-2 bg-green-100 text-green-800"
+                              >
+                                Results Available
+                              </Badge>
+                            )}
                           </div>
                           <p className="text-lg font-semibold text-gray-800 mb-2">
                             {item.query}
