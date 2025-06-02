@@ -2,8 +2,11 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-## Link For Backend 
+## Link For Backend API
 https://amartyasaran-intellihire.hf.space/docs
+
+## Link For HuggingFace Backend
+https://huggingface.co/spaces/amartyasaran/IntelliHire/tree/main
 
 First, run the development server:
 
