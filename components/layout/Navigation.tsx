@@ -75,7 +75,7 @@ export function Navigation() {
               className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent bg-size-200 animate-gradient-x"
               whileHover={{ scale: 1.05 }}
             >
-              100X
+              IntelliHire
             </motion.span>
           </motion.div>
 

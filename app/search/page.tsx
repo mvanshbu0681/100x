@@ -223,7 +223,7 @@ export default function SearchPage() {
                   className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
                   whileHover={{ scale: 1.05 }}
                 >
-                  100X Search
+                  IntelliHire
                 </motion.h1>
                 <Button
                   variant="ghost"
@@ -464,7 +464,9 @@ export default function SearchPage() {
                           ?.label.toLowerCase() || "search query"
                       }...`}
                       className="w-full text-lg text-gray-800 placeholder:text-gray-400 bg-transparent border-0 outline-none focus:ring-0 py-3"
-                      onKeyDown={(e) => e.key === "Enter" && !isSearching && handleSearch()}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" && !isSearching && handleSearch()
+                      }
                       disabled={isSearching}
                     />
                   </div>
@@ -559,15 +561,21 @@ export default function SearchPage() {
                       Search Results
                     </h3>
                     <div className="flex items-center space-x-2">
-                      <Badge variant="secondary" className="bg-green-100 text-green-800">
-                        {searchResults.metadata?.totalResults || searchResults.results?.length || 0} Results
+                      <Badge
+                        variant="secondary"
+                        className="bg-green-100 text-green-800"
+                      >
+                        {searchResults.metadata?.totalResults ||
+                          searchResults.results?.length ||
+                          0}{" "}
+                        Results
                       </Badge>
                       <Badge variant="outline" className="text-gray-600">
                         {searchResults.metadata?.searchTime || "N/A"}
                       </Badge>
                     </div>
                   </div>
-                  
+
                   {/* Results Grid */}
                   {searchResults.results && searchResults.results.length > 0 ? (
                     <div className="space-y-4">
@@ -582,23 +590,34 @@ export default function SearchPage() {
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
                               <div className="flex items-center space-x-2 mb-2">
-                                <h4 className="text-lg font-semibold text-gray-900">{person.name}</h4>
+                                <h4 className="text-lg font-semibold text-gray-900">
+                                  {person.name}
+                                </h4>
                                 {person.verified && (
-                                  <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                                  <Badge
+                                    variant="secondary"
+                                    className="bg-blue-100 text-blue-800 text-xs"
+                                  >
                                     Verified
                                   </Badge>
                                 )}
                               </div>
-                              <p className="text-gray-600 mb-2">{person.title} at {person.company}</p>
-                              <p className="text-gray-500 text-sm mb-3">{person.location}</p>
-                              
+                              <p className="text-gray-600 mb-2">
+                                {person.title} at {person.company}
+                              </p>
+                              <p className="text-gray-500 text-sm mb-3">
+                                {person.location}
+                              </p>
+
                               {/* Display raw text if available */}
                               {person.rawText && (
                                 <div className="mb-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                                  <p className="text-sm text-gray-700 italic">"{person.rawText}"</p>
+                                  <p className="text-sm text-gray-700 italic">
+                                    "{person.rawText}"
+                                  </p>
                                 </div>
                               )}
-                              
+
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                                 <div className="flex items-center text-gray-600">
                                   <Mail className="w-4 h-4 mr-2" />
@@ -613,9 +632,9 @@ export default function SearchPage() {
                                 {person.linkedin && (
                                   <div className="flex items-center text-blue-600">
                                     <Users className="w-4 h-4 mr-2" />
-                                    <a 
-                                      href={person.linkedin} 
-                                      target="_blank" 
+                                    <a
+                                      href={person.linkedin}
+                                      target="_blank"
                                       rel="noopener noreferrer"
                                       className="hover:underline"
                                     >
@@ -625,11 +644,13 @@ export default function SearchPage() {
                                 )}
                               </div>
                             </div>
-                            
+
                             <div className="text-right">
                               <div className="flex items-center space-x-1 mb-2">
                                 <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                                <span className="text-sm font-medium">{person.accuracy}%</span>
+                                <span className="text-sm font-medium">
+                                  {person.accuracy}%
+                                </span>
                               </div>
                               <div className="text-xs text-gray-500">
                                 Sources: {person.sources?.join(", ")}
