@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView, useAnimation } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, RefObject } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +16,7 @@ import {
 export function Hero() {
   const router = useRouter();
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.3 });
+  const isInView = useInView(ref as unknown as RefObject<HTMLElement>, { once: true, amount: 0.3 });
   const controls = useAnimation();
   const [typedText, setTypedText] = useState("");
   const [isTypingComplete, setIsTypingComplete] = useState(false);

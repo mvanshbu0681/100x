@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   motion,
   useScroll,
@@ -8,7 +8,7 @@ import {
   AnimatePresence,
 } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Search, Sparkles, Zap, LogOut, User } from "lucide-react";
+import { Menu, X, Sparkles, LogOut, User } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 

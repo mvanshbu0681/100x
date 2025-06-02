@@ -1,13 +1,14 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, RefObject } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, Quote, Users, TrendingUp, Award } from "lucide-react";
+import Image from "next/image";
 
 export function Testimonials() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
+  const isInView = useInView(ref as unknown as RefObject<HTMLElement>, { once: true, amount: 0.2 });
 
   const testimonials = [
     {
@@ -261,7 +262,7 @@ export function Testimonials() {
                         whileHover={{ scale: 1.1 }}
                       >
                         <div className="w-12 h-12 rounded-full overflow-hidden">
-                          <img
+                          <Image
                             src={testimonial.avatar}
                             alt={testimonial.name}
                             className="w-full h-full object-cover"

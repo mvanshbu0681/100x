@@ -1,14 +1,14 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, RefObject } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Globe, Users, Database, Clock, Shield } from "lucide-react";
 
 export function GlobalReach() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
+  const isInView = useInView(ref as unknown as RefObject<HTMLElement>, { once: true, amount: 0.2 });
   const [mounted, setMounted] = useState(false);
 
   // Deterministic positions for floating orbs to prevent hydration errors

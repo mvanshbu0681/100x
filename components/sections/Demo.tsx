@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, RefObject } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,10 +19,14 @@ import {
   CheckCircle,
   Play,
 } from "lucide-react";
+import Image from "next/image";
 
 export function Demo() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
+  const isInView = useInView(ref as unknown as RefObject<HTMLElement>, {
+    once: true,
+    amount: 0.2,
+  });
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
 
@@ -40,7 +44,7 @@ export function Demo() {
       verified: true,
       accuracy: 98,
       avatar:
-        "https://images.unsplash.com/photo-1494790108755-2616b332e234?w=150&h=150&fit=crop&crop=face",
+        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
     },
     {
       id: 2,
@@ -262,7 +266,7 @@ export function Demo() {
                             whileHover={{ scale: 1.1 }}
                           >
                             <div className="w-16 h-16 rounded-xl overflow-hidden">
-                              <img
+                              <Image
                                 src={person.avatar}
                                 alt={person.name}
                                 className="w-full h-full object-cover"

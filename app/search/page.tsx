@@ -1,7 +1,6 @@
 "use client";
 
 import { motion, useAnimation, AnimatePresence } from "framer-motion";
-import type { HTMLMotionProps } from "framer-motion";
 import React from "react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -52,7 +51,25 @@ const sidebarItems = [
   { id: "settings", label: "Settings", icon: Settings },
 ];
 
-const MotionDiv = motion.div as React.FC<HTMLMotionProps<"div">>;
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
+};
 
 export default function SearchPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -109,32 +126,12 @@ export default function SearchPage() {
     setSearchHistory((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
-    },
-  };
-
   return (
     <div className="flex h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 overflow-hidden">
       {/* Animated Sidebar */}
       <AnimatePresence>
         {sidebarOpen && (
-          <motion.aside
+          <motion.div
             initial={{ x: -300, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -300, opacity: 0 }}
@@ -144,7 +141,7 @@ export default function SearchPage() {
             aria-label="Sidebar navigation"
           >
             {/* Sidebar Header */}
-            <MotionDiv
+            <motion.div
               variants={itemVariants}
               className="p-6 border-b border-gray-200/60"
             >
@@ -166,7 +163,7 @@ export default function SearchPage() {
               </div>
 
               {/* Project Selection */}
-              <MotionDiv
+              <motion.div
                 className="relative group cursor-pointer"
                 whileHover={{ scale: 1.02 }}
               >
@@ -184,10 +181,10 @@ export default function SearchPage() {
                   </div>
                   <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
                 </div>
-              </MotionDiv>
+              </motion.div>
 
               {/* Usage Progress */}
-              <MotionDiv
+              <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.5 }}
@@ -200,8 +197,8 @@ export default function SearchPage() {
                   <span className="text-xs text-gray-500">750/1000</span>
                 </div>
                 <Progress value={75} className="h-2" />
-              </MotionDiv>
-            </MotionDiv>
+              </motion.div>
+            </motion.div>
 
             {/* Navigation Items */}
             <motion.nav
@@ -211,7 +208,7 @@ export default function SearchPage() {
               className="flex-1 p-4 space-y-2"
             >
               {sidebarItems.map((item, index) => (
-                <MotionDiv
+                <motion.div
                   key={item.id}
                   variants={itemVariants}
                   custom={index}
@@ -225,7 +222,7 @@ export default function SearchPage() {
                         : "hover:bg-gray-100/80 text-gray-700"
                     }`}
                   >
-                    <MotionDiv
+                    <motion.div
                       className={`mr-3 ${
                         item.active
                           ? "text-white"
@@ -234,28 +231,28 @@ export default function SearchPage() {
                       whileHover={{ rotate: item.active ? 0 : 10 }}
                     >
                       <item.icon className="w-5 h-5" />
-                    </MotionDiv>
+                    </motion.div>
                     <span className="font-medium flex-1">{item.label}</span>
                     {item.badge && (
-                      <MotionDiv
+                      <motion.div
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         className="bg-red-500 text-white text-xs px-2 py-1 rounded-full"
                       >
                         {item.badge}
-                      </MotionDiv>
+                      </motion.div>
                     )}
                   </div>
-                </MotionDiv>
+                </motion.div>
               ))}
             </motion.nav>
 
             {/* User Profile */}
-            <MotionDiv
+            <motion.div
               variants={itemVariants}
               className="p-4 border-t border-gray-200/60"
             >
-              <MotionDiv
+              <motion.div
                 className="flex items-center p-3 rounded-xl hover:bg-gray-100/80 cursor-pointer transition-all duration-300 group"
                 whileHover={{ scale: 1.02 }}
               >
@@ -272,9 +269,9 @@ export default function SearchPage() {
                   <div className="text-xs text-gray-600">Premium User</div>
                 </div>
                 <Crown className="w-4 h-4 text-yellow-500 group-hover:scale-110 transition-transform" />
-              </MotionDiv>
-            </MotionDiv>
-          </motion.aside>
+              </motion.div>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -299,21 +296,21 @@ export default function SearchPage() {
                   <Menu className="w-5 h-5" />
                 </Button>
               )}
-              <MotionDiv
+              <motion.div
                 className="flex items-center text-gray-600"
                 whileHover={{ scale: 1.05 }}
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 <span className="text-sm font-medium">Back to Dashboard</span>
-              </MotionDiv>
+              </motion.div>
             </div>
 
-            <MotionDiv whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
                 <Plus className="w-4 h-4 mr-2" />
                 New Search
               </Button>
-            </MotionDiv>
+            </motion.div>
           </div>
         </motion.header>
 
@@ -327,8 +324,8 @@ export default function SearchPage() {
             className="flex-1 flex flex-col p-8 overflow-y-auto"
           >
             {/* Logo and Title */}
-            <MotionDiv variants={itemVariants} className="text-center mb-12">
-              <MotionDiv
+            <motion.div variants={itemVariants} className="text-center mb-12">
+              <motion.div
                 className="inline-flex items-center mb-6"
                 whileHover={{ scale: 1.05 }}
               >
@@ -343,7 +340,7 @@ export default function SearchPage() {
                     Discover anyone, anywhere
                   </p>
                 </div>
-              </MotionDiv>
+              </motion.div>
 
               <motion.p
                 variants={itemVariants}
@@ -352,10 +349,10 @@ export default function SearchPage() {
                 Use our advanced AI to find contact information, social
                 profiles, and professional networks instantly.
               </motion.p>
-            </MotionDiv>
+            </motion.div>
 
             {/* Search Tabs */}
-            <MotionDiv variants={itemVariants} className="mb-8">
+            <motion.div variants={itemVariants} className="mb-8">
               <div className="flex flex-wrap gap-2 p-2 bg-white/80 backdrop-blur-md rounded-2xl border border-gray-200/60 shadow-lg">
                 {searchTabs.map((tab) => (
                   <motion.button
@@ -375,12 +372,12 @@ export default function SearchPage() {
                   </motion.button>
                 ))}
               </div>
-            </MotionDiv>
+            </motion.div>
 
             {/* Search Input */}
-            <MotionDiv variants={itemVariants} className="relative mb-12">
+            <motion.div variants={itemVariants} className="relative mb-12">
               <div className="relative group">
-                <MotionDiv className="absolute -inset-1 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-2xl blur-lg opacity-0 group-hover:opacity-30 transition-all duration-500" />
+                <motion.div className="absolute -inset-1 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-2xl blur-lg opacity-0 group-hover:opacity-30 transition-all duration-500" />
                 <div className="relative flex items-center bg-white border-2 border-gray-300 rounded-2xl shadow-lg p-3 focus-within:border-blue-500 focus-within:shadow-xl transition-all duration-300">
                   <div className="flex-1 flex items-center">
                     <Search className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
@@ -397,7 +394,7 @@ export default function SearchPage() {
                       onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                     />
                   </div>
-                  <MotionDiv
+                  <motion.div
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     className="ml-3"
@@ -410,12 +407,12 @@ export default function SearchPage() {
                       <Send className="w-5 h-5" />
                       <span className="ml-2 font-medium">Search</span>
                     </Button>
-                  </MotionDiv>
+                  </motion.div>
                 </div>
               </div>
 
               {/* Search Suggestions */}
-              <MotionDiv
+              <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{
                   opacity: searchQuery ? 1 : 0,
@@ -447,11 +444,11 @@ export default function SearchPage() {
                     </div>
                   </div>
                 )}
-              </MotionDiv>
-            </MotionDiv>
+              </motion.div>
+            </motion.div>
 
             {/* Search History */}
-            <MotionDiv variants={itemVariants} className="flex-1">
+            <motion.div variants={itemVariants} className="flex-1">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-bold text-gray-800">
                   Search History
@@ -467,7 +464,7 @@ export default function SearchPage() {
               <div className="space-y-4">
                 <AnimatePresence>
                   {searchHistory.map((item, index) => (
-                    <MotionDiv
+                    <motion.div
                       key={item.id}
                       initial={{ opacity: 0, y: 20, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -524,7 +521,7 @@ export default function SearchPage() {
 
                         <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <motion.button
-                            onClick={(e) => {
+                            onClick={(e: React.MouseEvent) => {
                               e.stopPropagation();
                               toggleFavorite(item.id);
                             }}
@@ -543,7 +540,7 @@ export default function SearchPage() {
                             />
                           </motion.button>
                           <motion.button
-                            onClick={(e) => {
+                            onClick={(e: React.MouseEvent) => {
                               e.stopPropagation();
                               deleteHistory(item.id);
                             }}
@@ -555,11 +552,11 @@ export default function SearchPage() {
                           </motion.button>
                         </div>
                       </div>
-                    </MotionDiv>
+                    </motion.div>
                   ))}
                 </AnimatePresence>
               </div>
-            </MotionDiv>
+            </motion.div>
           </motion.main>
         </div>
       </div>
